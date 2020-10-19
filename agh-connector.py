@@ -6,8 +6,10 @@ import traceback
 import time
 import argparse
 
-parser = argparse.ArgumentParser(description='Script to download data from Airella services and send them to AGH Infrastructure')
-parser.add_argument('--stations', help='List of stations ids, splited by comma')
+parser = argparse.ArgumentParser(
+    description='Script to download data from Airella services and send them to AGH Infrastructure')
+parser.add_argument(
+    '--stations', help='List of stations ids, splited by comma')
 parser.add_argument('--email', help='Email of account at Airella')
 parser.add_argument('--password', help='Password of account at Airella')
 parser.add_argument('--airella-api-url', help='Airella API URL')
@@ -57,6 +59,13 @@ def make_authorized_GET_request(url):
         'Content-Type': 'application/json',
         "Authorization": "Bearer {}".format(access_token["token"])
     })
+
+
+def get_user_station_ids():
+    url = airella_api_url + "/user/stations"
+    stations = make_authorized_GET_request(url).json()["data"]
+    station_ids = map(lambda station: station["id"], stations)
+    return station_ids
 
 
 def get_sensor_last_measurement(station_id, sensor_id):
@@ -193,11 +202,15 @@ def send_station_data(station_id, data):
     headersData = {"token": agh_api_token}
     r = requests.post(urlData, data=txpayload, headers=headersData, timeout=10)
     if r.status_code != 201:
-        raise RuntimeError("Error when sending data, status code: {}".format(r.status_code))
+        raise RuntimeError(
+            "Error when sending data, status code: {}".format(r.status_code))
 
 
 def send_all_stations_data():
-    for station_id in stations:
+    stations_to_send_data = stations
+    if len(stations_to_send_data) == 0:
+        stations_to_send_data = get_user_station_ids()
+    for station_id in stations_to_send_data:
         try:
             print("Getting data about station {}".format(station_id))
             data = get_station_data(station_id)
