@@ -192,7 +192,7 @@ def send_station_data(station_id, data):
     urlData = agh_api_url
     headersData = {"token": agh_api_token}
     r = requests.post(urlData, data=txpayload, headers=headersData, timeout=10)
-    if r.status_code != 200:
+    if r.status_code != 201:
         raise RuntimeError("Error when sending data, status code: {}".format(r.status_code))
 
 
