@@ -9,7 +9,7 @@ import argparse
 parser = argparse.ArgumentParser(
     description='Script to download data from Airella services and send them to AGH Infrastructure')
 parser.add_argument(
-    '--stations', help='List of stations ids, splited by comma')
+    '--stations', help='List of stations ids, splited by comma. If nothing or "" provided, all stations from user will be taken')
 parser.add_argument('--email', help='Email of account at Airella')
 parser.add_argument('--password', help='Password of account at Airella')
 parser.add_argument('--airella-api-url', help='Airella API URL')
@@ -18,7 +18,9 @@ parser.add_argument('--agh-api-token', help='AGH API token')
 
 args = parser.parse_args()
 
-stations = args.stations.split(',')
+stations = []
+if args.stations is not None and args.stations != "":
+    stations = args.stations.split(',')
 email = args.email
 password = args.password
 airella_api_url = args.airella_api_url
