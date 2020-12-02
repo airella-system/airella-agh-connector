@@ -231,7 +231,7 @@ def main():
         refresh_access_token()
         send_all_stations_data()
         print("Next interation will be after 5 minutes")
-        time.sleep(5 * 1000 * 60)  # 5 minutes
+        time.sleep(5 * 60)  # 5 minutes
 
 
 main()
